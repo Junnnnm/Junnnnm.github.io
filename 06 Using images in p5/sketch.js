@@ -15,7 +15,7 @@ function preload(){
   lionR = loadImage("assets/lion-right.png");
 
   for(let i = 0; i <= 8; i++){
-    pinImages.push(loadIamge("assets/pin-0" + 0 + ".png"));
+    pinImages.push(loadImage("assets/pin-0" + i + ".png"));
   }
  
 }
@@ -23,19 +23,16 @@ function preload(){
 function setup() {
   createCanvas(windowWidth, windowHeight);
   imageMode(CENTER);
-  frameRate(2);
 }
 
 function draw(){
   background(220);
 
 
-  image(pinIamges[currentFrame], width/2, height/2);
+  image(pinImages[currentFrame], width/2, height/2);
   if(frameCount % 3 === 0){
-    currentFrame++;
-  }
-  if(currentFrame > 8) currentFrame = 0;
-
+  currentFrame++;
+  if(currentFrame > 8) currentFrame = 0; }
   drawLion();
 }
  
@@ -47,8 +44,8 @@ function drawLion(){
   let sizeY = lionL.width / 2;
 
   // managing the state variable
-  if (movedX > 0) facing = "right";
-  else if (movedX < 0) facing = "left";
+  if(movedX > 0) facing = "right";
+  else if(movedX < 0) facing = "left";
 
   //interpreting the state variable
   if(facing === "left"){
