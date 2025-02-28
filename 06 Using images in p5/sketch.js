@@ -41,7 +41,7 @@ function drawLion(){
   //Alt-SHIFT-F(format) -- auto indentation
   //Lion code
   let sizeX = lionL.width / 2;
-  let sizeY = lionL.width / 2;
+  let sizeY = lionL.height / 2;
 
   // managing the state variable
   if(movedX > 0) facing = "right";
