@@ -2,19 +2,12 @@
 // Junyu
 // CS30
 // The man wanders through the mountains, using mouse time to control his left and right movements, and the keyboard is handling the background color like this.
+
 let stickmanX = 200; // Initial X position of the stickman
 let stickmanY = 270; // Standing Y position of the stickman
 let backgroundColors = [ [180, 210, 230], [250, 200, 200], [200, 250, 200], [200, 200, 250], [255, 255, 180]  ];
 let currentBgIndex = 0; // Current background index
 
-<<<<<<< HEAD
-=======
-let stickmanX = 200; // Initial X position of the stickman
-let stickmanY = 270; // Standing Y position of the stickman
-let backgroundColors = [ [180, 210, 230], [250, 200, 200], [200, 250, 200], [200, 200, 250], [255, 255, 180]  ];
-let currentBgIndex = 0; // Current background index
-
->>>>>>> 16e0a633c91a7e053409d31eba357c4b965c2cf9
 function setup() {
   createCanvas(600, 400);
 }
