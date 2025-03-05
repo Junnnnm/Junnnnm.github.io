@@ -25,10 +25,4 @@ function generateTerrain(){
 }
 function draw() {
   //background(220);
-  let xoff = 0;
-  let n = noise(xoff);
-  let x = map(n, 0, 1, 0, width);
-  ellipse(x, height / 2, 50, 50);
-  xoff = xoff + 0.01;
-  
 }
