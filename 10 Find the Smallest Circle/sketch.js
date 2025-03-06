@@ -28,7 +28,7 @@ function drawCircles(){
       smallX = x;    smallY = y;
     }
   }
-  fill(255, 255, 0)
+  fill(255, 255, 0);
   circle(smallX, smallY, smallestDiameter);
 }
 function draw() {
