@@ -3,7 +3,6 @@
 // March 19th, 2025
 // Storing objects in objects, overwriting objects, basic
 
-
 let myPlanet;
 
 function setup() {
@@ -18,15 +17,27 @@ function draw() {
 }
 
 function mousePressed(){
-  //mouseClicked() to behaves differently in certain browsers
-  myPlanet.createMoon();
+  //mouseClicked() → behaves differently in certain browsers
+  if(keyIsPressed && keyCode === SHIFT){
+    myPlanet = new Planet(mouseX, mouseY);
+  }
+  else{
+    myPlanet.createMoon();
+  }
 }
+
+function keyPressed(){
+  //if any key (other than SHIFT) is pressed...
+  if(keyCode !== SHIFT){
+    myPlanet.relocate(mouseX, mouseY);
+  }
+}
+
 class Planet{
   //1. Constructor
-  constructor(x,y){
-    this.x = x;    this.y = y;    this.s = 100;
-    this.moons = [];    
-
+  constructor(x, y){
+    this.x = x;   this.y = y;   this.s = 100;
+    this.moons = [];
   }
   //2. Class Functions
   display(){
@@ -38,24 +49,33 @@ class Planet{
     }
   }
 
+  relocate(x, y){
+    //First, the planet:
+    this.x = x;   this.y = y; 
+    //Then, the moons:
+    for(let m of this.moons){
+      m.x = x;   m.y = y;
+    }
+  }
+
   createMoon(){
-    this.moons.push( new Moon(this.x, this.y));
+    this.moons.push( new Moon(this.x, this.y) );
   }
 }
 
 class Moon{
   constructor(x,y){
-    this.x = x;  this.y = y;   this.speed = 2;
-    this.angle = 0;   this.orbitRadius = 80;   this.s = 25;
+    this.x = x;  this.y = y;   this.speed = random(1,5);
+    this.angle = 0;  this.orbitRadius = random(80,250); this.s = random(5,50);
   }
   update(){
-    // handles all internal class function calls
+    //handles all internal class function calls
     this.move();
     this.display();
   }
 
   move(){
-
+    this.angle += this.speed;
   }
 
   display(){
