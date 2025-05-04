@@ -1,164 +1,159 @@
-// Project Title
-// Your Name
-// Date
-//
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Car car car
+// JunyuTang
+// Apr 22
+// This project simulates vehicle operations on a section of two-way roadway。
 
-// 全局数组，用于存储东向和西向车辆
+// Global arrays to store eastbound and westbound vehicles
 let eastbound = [];
 let westbound = [];
 let trafficLight;
 let road;
 
 function setup() {
-  createCanvas(600, 400); // 创建一个600x400的画布
-  road = new Road(); // 初始化道路
-  trafficLight = new TrafficLight(20, 320); // 交通灯位于位置(20, 320)
+  createCanvas(600, 400); // Create a canvas of 600x400
+  road = new Road(); // Initialize road object
+  trafficLight = new TrafficLight(20, 320); // Initialize traffic light at position (20, 320)
 
-  // 初始化20辆东向车辆
+  // Initialize 20 eastbound vehicles
   for (let i = 0; i < 20; i++) {
-    let y = random(10, 120); // 道路上半部分(10-130)
-    let xSpeed = random(1, 3); // 正速度(向右)
+    let y = random(10, 120); // Position on the upper part of the road
+    let xSpeed = random(1, 3); // Positive speed (moving right)
     eastbound.push(new Vehicle(random([0, 100]), random(0, width), y, 1, xSpeed));
   }
 
-  // 初始化20辆西向车辆
+  // Initialize 20 westbound vehicles
   for (let i = 0; i < 20; i++) {
-    let y = random(160, 280); // 道路下半部分(160-250)
-    let xSpeed = random(-3, -1); // 负速度(向左)
+    let y = random(160, 280); // Position on the lower part of the road
+    let xSpeed = random(-3, -1); // Negative speed (moving left)
     westbound.push(new Vehicle(random([0, 100]), random(0, width), y, -1, xSpeed));
   }
 }
 
 function draw() {
-  background(220); // 清除画布
-  road.display(); // 绘制道路
-  trafficLight.update();
-  trafficLight.display();
+  background(220); // Clear the canvas
+  road.display(); // Draw the road
+  trafficLight.update(); // Update the traffic light
+  trafficLight.display(); // Draw the traffic light
 
-  // 处理东向车辆
+  // Update eastbound vehicles
   for (let vehicle of eastbound) {
-    vehicle.checkCollision(eastbound); // 检查东向车辆组内的碰撞
-    vehicle.action();
+    vehicle.checkCollision(eastbound); // Check collision within the eastbound group
+    vehicle.action(); // Perform vehicle behavior
   }
 
-  // 处理西向车辆
+  // Update westbound vehicles
   for (let vehicle of westbound) {
-    vehicle.checkCollision(westbound); // 检查西向车辆组内的碰撞
-    vehicle.action();
+    vehicle.checkCollision(westbound); // Check collision within the westbound group
+    vehicle.action(); // Perform vehicle behavior
   }
 }
 
-// 按下鼠标时添加车辆
+// Mouse click event: Add a new vehicle
 function mousePressed() {
   let y, xSpeed, direction;
 
   if (keyIsDown(SHIFT)) {
-    // Shift + 左键点击：添加一辆西向车辆
-    y = random(160, 280); // 道路下半部分
-    xSpeed = random(-3, -1); // 负速度(向左)
-    direction = 0; // 方向：0表示向左
+    // Shift + click: Add a westbound vehicle
+    y = random(160, 280); // Lower part of the road
+    xSpeed = random(-3, -1); // Negative speed (left)
+    direction = 0; // Direction 0 means left
     westbound.push(new Vehicle(random([0, 10]), mouseX, y, direction, xSpeed));
   } else {
-    // 左键点击：添加一辆东向车辆
-    y = random(10, 120); // 道路上半部分
-    xSpeed = random(1, 3); // 正速度(向右)
-    direction = 1; // 方向：1表示向右
+    // Regular click: Add an eastbound vehicle
+    y = random(10, 120); // Upper part of the road
+    xSpeed = random(1, 3); // Positive speed (right)
+    direction = 1; // Direction 1 means right
     eastbound.push(new Vehicle(random([0, 10]), mouseX, y, direction, xSpeed));
   }
 }
 
-// 响应空格键使交通灯变红
+// Press spacebar to turn the light red
 function keyPressed() {
   if (key === ' ') {
-    trafficLight.turnRed();
+    trafficLight.turnRed(); // Switch traffic light to red
   }
 }
 
-// Road 类，用于管理道路的渲染
+// Road class: handles rendering the road
 class Road {
   constructor() {
-    this.width = 600; // 道路宽度与画布宽度一致
-    this.height = 300; // 道路高度
-    this.y = 0; // 道路位置(顶部边缘)
+    this.width = 600; // Road width
+    this.height = 300; // Road height
+    this.y = 0; // Road top position
   }
 
-  // 绘制道路，带有虚线中心线
+  // Draw the road including the dashed line
   display() {
-    fill(0); // 黑色填充道路
+    fill(0); // Black road fill
     rect(0, this.y, this.width, this.height);
 
-    stroke(255); // 白色描边用于虚线
+    stroke(255); // White dashed center line
     strokeWeight(2);
-    this.setLineDash([10, 10]); // 虚线样式
+    this.setLineDash([10, 10]); // Set dash pattern
     line(0, this.y + this.height / 2, this.width, this.y + this.height / 2);
-    this.setLineDash([]); // 重置为实线
+    this.setLineDash([]); // Reset to solid lines
   }
 
-  // 辅助函数，用于设置虚线样式
+  // Helper: set dash pattern
   setLineDash(list) {
     drawingContext.setLineDash(list);
   }
 }
 
-// Vehicle 类，用于管理单个车辆
+// Vehicle class: represents a single vehicle
 class Vehicle {
   constructor(type, x, y, direction, xSpeed) {
-    this.type = type; // 0 表示汽车，1 表示卡车
-    this.x = x; // x 位置
-    this.y = y; // y 位置
-    this.direction = direction; // 0 表示向左，1 表示向右
-    this.xSpeed = xSpeed; // 水平速度
-    // 根据类型设置颜色：汽车为橙色，卡车为紫色
-    this.color = this.type === 0 ? color(255, 165, 0) : color(128, 0, 128);
-    this.width = this.type === 0 ? 30 : 30; // 汽车：30，卡车：40
-    this.height = this.type === 0 ? 15 : 20; // 汽车：15，卡车：20
+    this.type = type; // 0 = car, 1 = truck
+    this.x = x;
+    this.y = y;
+    this.direction = direction; // 0 = left, 1 = right
+    this.xSpeed = xSpeed;
+    this.color = this.type === 0 ? color(255, 165, 0) : color(128, 0, 128); // Orange or purple
+    this.width = this.type === 0 ? 30 : 30;
+    this.height = this.type === 0 ? 15 : 20;
   }
 
-  // 根据车辆类型渲染车辆
+  // Draw the vehicle
   display() {
-    push(); // 保存当前的绘制状态
-    translate(this.x, this.y); // 移动到车辆位置
+    push(); // Save current drawing state
+    translate(this.x, this.y); // Move to vehicle position
 
-    // 如果向左移动，则翻转车辆
     if (this.direction === 0) {
-      scale(-1, 1); // 水平镜像
+      scale(-1, 1); // Flip horizontally for leftward direction
     }
 
-    // 绘制车辆车身
+    // Draw the body
     fill(this.color);
     noStroke();
     rect(-this.width / 2, -this.height / 2, this.width, this.height);
 
-    if (this.type === 0) { // 汽车：绘制四个轮子
-      fill(200); // 黑色轮子
+    if (this.type === 0) {
+      // Draw wheels for a car
+      fill(200); // Gray wheels
       let wheelRadius = 2;
-      let wheelOffsetY = this.height / 2 + wheelRadius; // 轮子位置在车身下方
-      // 左侧轮子
-      ellipse(-this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // 左前轮
-      ellipse(-this.width / 6, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // 左后轮
-      // 右侧轮子
-      ellipse(this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // 右前轮
-      ellipse(this.width / 6, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // 右后轮
-    } else { // 卡车：绘制前部白色线条(车头)
-      stroke(255); // 白色线条
+      let wheelOffsetY = this.height / 2 + wheelRadius;
+      ellipse(-this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Left front
+      ellipse(-this.width / 6, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Left rear
+      ellipse(this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Right front
+      ellipse(this.width / 6, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Right rear
+    } else {
+      // Draw white stripe on truck cab
+      stroke(255);
       strokeWeight(1);
-      // 线条位置取决于方向(卡车前部)
       let lineX = this.direction === 1 ? -this.width / 2 + 5 : this.width / 2 - 5;
-      line(lineX, -this.height / 2, lineX, this.height / 2); // 前部垂直线
+      line(lineX, -this.height / 2, lineX, this.height / 2);
     }
 
-    pop(); // 恢复绘制状态
+    pop(); // Restore drawing state
   }
 
-  // 根据 xSpeed 更新车辆位置
+  // Update vehicle position
   move() {
     if (trafficLight.isGreen()) {
-      this.x += this.direction === 1 ? this.xSpeed : -this.xSpeed; // 向右或向左移动
+      this.x += this.direction === 1 ? this.xSpeed : -this.xSpeed;
     }
 
-    // 如果车辆超出屏幕，则循环返回
+    // Wrap around the canvas when out of bounds
     if (this.x > width + this.width / 2) {
       this.x = -this.width / 2;
     } else if (this.x < -this.width / 2) {
@@ -166,46 +161,34 @@ class Vehicle {
     }
   }
 
-  // 加速(最高限速为15或-15)
+  // Accelerate up to a max speed
   speedUp() {
-    if (this.direction === 1) {
-      this.xSpeed += 0.5; // 向右移动
-      if (this.xSpeed > 15) this.xSpeed = 15;
-    } else {
-      this.xSpeed += 0.5; // 向左移动(xSpeed为正，direction调整移动方向)
-      if (this.xSpeed > 15) this.xSpeed = 15;
-    }
+    this.xSpeed += 0.5;
+    if (this.xSpeed > 15) this.xSpeed = 15;
   }
 
-  // 减速(最低速度为0)
+  // Slow down but not below 0
   speedDown() {
-    if (this.direction === 1) {
-      this.xSpeed -= 0.5; // 向右移动
-      if (this.xSpeed < 0) this.xSpeed = 0;
-    } else {
-      this.xSpeed -= 0.5; // 向左移动
-      if (this.xSpeed < 0) this.xSpeed = 0;
-    }
+    this.xSpeed -= 0.5;
+    if (this.xSpeed < 0) this.xSpeed = 0;
   }
 
-  // 将车辆颜色更改为随机颜色
+  // Change to a random color
   changeColor() {
     this.color = color(random(255), random(255), random(255));
   }
 
-  // 检查与其他车辆的碰撞(同向车辆)
+  // Check for collision with vehicles in the same direction
   checkCollision(vehicles) {
     for (let other of vehicles) {
       if (other === this) continue;
 
       let distance = abs(this.x - other.x);
-      let minDistance = (this.width + other.width) / 2 + 10; // 安全距离
+      let minDistance = (this.width + other.width) / 2 + 10; // Minimum safe distance
 
-      if (distance < minDistance && abs(this.y - other.y) < 10) { // 同车道
-        if (this.direction === 1 && this.x < other.x) { // 本车在后
-          this.speedDown();
-          other.speedUp();
-        } else if (this.direction === 0 && this.x > other.x) { // 本车在后
+      if (distance < minDistance && abs(this.y - other.y) < 10) {
+        if ((this.direction === 1 && this.x < other.x) ||
+            (this.direction === 0 && this.x > other.x)) {
           this.speedDown();
           other.speedUp();
         }
@@ -213,7 +196,7 @@ class Vehicle {
     }
   }
 
-  // 主要行为方法，更新车辆行为
+  // Perform behavior logic
   action() {
     this.move();
     this.display();
@@ -226,22 +209,22 @@ class Vehicle {
   }
 }
 
-// TrafficLight 类，用于管理交通灯行为
+// TrafficLight class: controls light behavior
 class TrafficLight {
   constructor(x, y) {
-    this.x = x; // x 位置
-    this.y = y; // y 位置
-    this.state = "green"; // 初始状态：绿色
-    this.frameCount = 0; // 帧计数器，用于红灯持续时间
+    this.x = x;
+    this.y = y;
+    this.state = "green"; // Initial state
+    this.frameCount = 0; // Countdown for red light
   }
 
-  // 渲染交通灯
+  // Draw the traffic light
   display() {
-    fill(this.state === "green" ? color(0, 255, 0) : color(255, 0, 0)); // 绿色或红色
+    fill(this.state === "green" ? color(0, 255, 0) : color(255, 0, 0));
     ellipse(this.x, this.y, 30, 30);
   }
 
-  // 更新交通灯状态
+  // Update light state
   update() {
     if (this.state === "red") {
       this.frameCount--;
@@ -251,7 +234,7 @@ class TrafficLight {
     }
   }
 
-  // 将交通灯变为红色，持续120帧
+  // Switch to red for 120 frames
   turnRed() {
     if (this.state === "green") {
       this.state = "red";
@@ -259,7 +242,7 @@ class TrafficLight {
     }
   }
 
-  // 检查交通灯是否为绿色
+  // Check if the light is green
   isGreen() {
     return this.state === "green";
   }
