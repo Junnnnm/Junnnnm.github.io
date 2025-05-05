@@ -43,7 +43,7 @@ function draw() {
 
   // Update westbound vehicles
   for (let vehicle of westbound) {
-    vehicle.checkCollision(westbound); // Check collision within the westbound group
+    vehicle.checkCollision(westbound); 
     vehicle.action(); // Perform vehicle behavior
   }
 }
@@ -55,13 +55,13 @@ function mousePressed() {
   if (keyIsDown(SHIFT)) {
     // Shift + click: Add a westbound vehicle
     y = random(160, 280); // Lower part of the road
-    xSpeed = random(-3, -1); // Negative speed (left)
+    xSpeed = random(-3, -1); 
     direction = 0; // Direction 0 means left
     westbound.push(new Vehicle(random([0, 10]), mouseX, y, direction, xSpeed));
   } else {
     // Regular click: Add an eastbound vehicle
     y = random(10, 120); // Upper part of the road
-    xSpeed = random(1, 3); // Positive speed (right)
+    xSpeed = random(1, 3); 
     direction = 1; // Direction 1 means right
     eastbound.push(new Vehicle(random([0, 10]), mouseX, y, direction, xSpeed));
   }
@@ -77,8 +77,8 @@ function keyPressed() {
 // Road class: handles rendering the road
 class Road {
   constructor() {
-    this.width = 600; // Road width
-    this.height = 300; // Road height
+    this.width = 600; 
+    this.height = 300; 
     this.y = 0; // Road top position
   }
 
@@ -132,9 +132,9 @@ class Vehicle {
       fill(200); // Gray wheels
       let wheelRadius = 2;
       let wheelOffsetY = this.height / 2 + wheelRadius;
-      ellipse(-this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Left front
+      ellipse(-this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); 
       ellipse(-this.width / 6, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Left rear
-      ellipse(this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Right front
+      ellipse(this.width / 3, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); 
       ellipse(this.width / 6, wheelOffsetY, wheelRadius * 2, wheelRadius * 2); // Right rear
     } else {
       // Draw white stripe on truck cab
@@ -215,7 +215,7 @@ class TrafficLight {
     this.x = x;
     this.y = y;
     this.state = "green"; // Initial state
-    this.frameCount = 0; // Countdown for red light
+    this.frameCount = 0; 
   }
 
   // Draw the traffic light
