@@ -11,18 +11,22 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  background(15);
   drawRoad();
 
 }
 
 function drawRoad(){
-  fill(15, 15, 15);
-  square(0,20,1000);
-  stroke('magenta');
-  strokeWeight(10);
-  line(0,200,00,200);
+  for(let i = 0; i < width; i += 20){
+    stroke(255,0,0);
+    strokeWeight(3);
+    line(i,200,i + 10,200);
+  }
 
-
-
+}
+class vehicle{
+  constructor(x,y){
+    this.x = x;     this.y = y;
+    
+  }
 }
