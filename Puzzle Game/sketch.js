@@ -1,6 +1,6 @@
-// ========= GRID GAME ===========
-// Author: [Your Name]
-// Date: 2025-05-04
+// Puzzle Game
+// Junyu
+// 2025-04-06
 // Description: A simple grid-based puzzle game.
 //              Clicking a square flips its color (black/white) and adjacent squares.
 //              Press SPACE to toggle between a cross flip pattern and a square (3x3) flip pattern.
@@ -161,8 +161,8 @@ function windowResized() {
 
 function cheaterClick() {
   if (keyIsDown(SHIFT)) {
-    flip(currentCol, currentRow);  // 只翻转当前位置
-    return true;  // 表示用了cheat功能
+    flip(currentCol, currentRow);  
+    return true;  
   }
   return false;
 }
