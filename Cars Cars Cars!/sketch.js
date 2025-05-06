@@ -1,15 +1,16 @@
-// Project Title
-// Your Name
-// Date
-//
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
-
 // Car car car
 // JunyuTang
 // Apr 22
 // This project simulates vehicle operations on a section of two-way roadway。
 
+<<<<<<< HEAD
+// Car car car
+// JunyuTang
+// Apr 22
+// This project simulates vehicle operations on a section of two-way roadway。
+
+=======
+>>>>>>> 620b9d4e0641607c6d975c74241340cf0fe32788
 
 // Global arrays to store eastbound and westbound vehicles
 let eastbound = [];
