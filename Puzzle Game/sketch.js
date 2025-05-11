@@ -3,36 +3,31 @@
 // 2025-04-06
 // Description: A simple grid-based puzzle game.
 //              Clicking a square flips its color (black/white) and adjacent squares.
-//              Press SPACE to toggle between a cross flip pattern and a square (3x3) flip pattern.
-//              An overlay shows which squares will be affected by the next click.
 // ===============================
 
 let NUM_ROWS = 4;
 let NUM_COLS = 5;
 let rectWidth, rectHeight;
-let currentRow, currentCol; // Stores the grid coordinates of the mouse
-
-// Initial grid state (0 = black, 255 = white)
+let currentRow, currentCol;
 let gridData = [[0,0,0,0,0],
                 [0,0,0,0,0],
                 [0,255,0,0,0],
                 [255,255,255,0,0]];
 
-let flipPattern = 'cross'; // Can be 'cross' or 'square'
+
 
 function setup() {
+  // Determine the size of each square. Could use windowHeight,windowHeight  for Canvas to keep a square aspect ratio
   createCanvas(windowWidth, windowHeight);
-  // Determine the size of each square based on canvas size and grid dimensions
-  rectWidth = width / NUM_COLS;
-  rectHeight = height / NUM_ROWS;
+  rectWidth = width/NUM_COLS;
+  rectHeight = height/NUM_ROWS;
   randomizeGrid();
-  console.log("Game started. Press SPACE to toggle flip pattern.");
 }
 
 function draw() {
-  background(220); // Light grey background
-  determineActiveSquare(); // Figure out which tile the mouse cursor is over
-  drawGrid(); // Render the grid, including the overlay
+  background(220);
+  determineActiveSquare();   //figure out which tile the mouse cursor is over
+  drawGrid();                //render the current game board to the screen (and the overlay)
   if(checkWinCondition()){
     fill(100);
     textSize(60);
@@ -40,134 +35,52 @@ function draw() {
   }
 }
 
-// --- Input Handling ---
 
-function mousePressed() {
-  // Flip tiles based on the current pattern when the mouse is clicked
-  if(cheaterClick())  return;
-  if (flipPattern === 'cross') {
-    // Cross pattern flip
+
+
+function mousePressed(){
+  // cross-shaped pattern flips on a mouseclick. Boundary conditions are checked within the flip function to ensure in-bounds access for array
+
+  if (keyIsDown(SHIFT)){   // if it is shift, Only the current flip is executed
+    flip (currentCol, currentRow);
+    return;
+  }
     flip(currentCol, currentRow);
-    flip(currentCol - 1, currentRow);
-    flip(currentCol + 1, currentRow);
-    flip(currentCol, currentRow - 1);
-    flip(currentCol, currentRow + 1);
-  } 
-  else if (flipPattern === 'square') {
-    // Square pattern flip (3x3 grid centered on the mouse)
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        flip(currentCol + i, currentRow + j);
-      }
+    flip(currentCol-1, currentRow);
+    flip(currentCol+1, currentRow);
+    flip(currentCol, currentRow-1);
+    flip(currentCol, currentRow+1);
+}
+
+function flip(col, row){
+  // given a column and row for the 2D array, flip its value from 0 to 255 or 255 to 0
+  // conditions ensure that the col and row given are valid and exist for the array. If not, no operations take place.
+  if (col >= 0 && col < NUM_COLS ){
+    if (row >= 0 && row < NUM_ROWS){
+      if (gridData[row][col] === 0) gridData[row][col] = 255;
+      else gridData[row][col] = 0;
     }
   }
 }
 
-function keyPressed() {
-  // Toggle flip pattern when SPACE key is pressed
-  if (keyCode === 32) { // 32 is the keyCode for SPACE
-    if (flipPattern === 'cross') {
-      flipPattern = 'square';
-    } else {
-      flipPattern = 'cross';
-    }
-    console.log("Flip pattern changed to: " + flipPattern); // Log change to console
-  }
+function determineActiveSquare(){
+  // An expression to run each frame to determine where the mouse currently is.
+  currentRow = int(mouseY / rectHeight);
+  currentCol = int(mouseX / rectWidth);
 }
 
-// --- Game Logic ---
-
-function flip(col, row) {
-  // Given a column and row, flip its value (0 to 255 or 255 to 0)
-  // Checks boundaries to ensure the col/row exists in the gridData array.
-  if (col >= 0 && col < NUM_COLS && row >= 0 && row < NUM_ROWS) {
-    if (gridData[row][col] === 0) {
-      gridData[row][col] = 255;
-    } else {
-      gridData[row][col] = 0;
+function drawGrid(){
+  // Render a grid of squares - fill color set according to data stored in the 2D array
+  for (let x = 0; x < NUM_COLS ; x++){
+    for (let y = 0; y < NUM_ROWS; y++){
+      fill(gridData[y][x]); 
+      rect(x*rectWidth, y*rectHeight, rectWidth, rectHeight);
     }
   }
 }
 
-function determineActiveSquare() {
-  // Calculate which grid square the mouse is currently over
-  // Use floor() or int() to convert mouse coordinates to integer grid indices
-  currentRow = floor(mouseY / rectHeight);
-  currentCol = floor(mouseX / rectWidth);
 
-  // Constrain the values to be within valid grid indices,
-  // though the overlay/flip logic also checks boundaries.
-  currentRow = constrain(currentRow, 0, NUM_ROWS - 1);
-  currentCol = constrain(currentCol, 0, NUM_COLS - 1);
-}
-
-// --- Drawing ---
-
-function drawGrid() {
-  // 1. Render the grid squares based on gridData
-  for (let x = 0; x < NUM_COLS; x++) {
-    for (let y = 0; y < NUM_ROWS; y++) {
-      fill(gridData[y][x]); // Set fill based on array value (0=black, 255=white)
-      stroke(100); // Add a subtle grey border to squares
-      rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight);
-    }
-  }
-
-  // 2. Draw the overlay to show affected squares
-  drawOverlay();
-}
-
-function drawOverlay() {
-    // Draws a semi-transparent overlay on squares that will be flipped
-    fill(0, 255, 0, 100); // Overlay color: light green, semi-transparent
-    noStroke(); // No border for the overlay shapes
-
-    // Check if the mouse is potentially over the grid area before drawing overlay
-    // (determineActiveSquare already constrains currentCol/Row)
-
-    if (flipPattern === 'cross') {
-        // Draw overlay for cross pattern
-        drawOverlayRect(currentCol, currentRow);
-        drawOverlayRect(currentCol - 1, currentRow);
-        drawOverlayRect(currentCol + 1, currentRow);
-        drawOverlayRect(currentCol, currentRow - 1);
-        drawOverlayRect(currentCol, currentRow + 1);
-    } else if (flipPattern === 'square') {
-        // Draw overlay for square pattern (3x3)
-        for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
-                drawOverlayRect(currentCol + i, currentRow + j);
-            }
-        }
-    }
-}
-
-// Helper function to draw a single overlay rectangle, including boundary checks
-function drawOverlayRect(col, row) {
-    // Only draw if the col/row is within the valid grid bounds
-    if (col >= 0 && col < NUM_COLS && row >= 0 && row < NUM_ROWS) {
-        rect(col * rectWidth, row * rectHeight, rectWidth, rectHeight);
-    }
-}
-
-// Adjust canvas size if window is resized
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-  // Recalculate square sizes
-  rectWidth = width / NUM_COLS;
-  rectHeight = height / NUM_ROWS;
-}
-
-
-function cheaterClick() {
-  if (keyIsDown(SHIFT)) {
-    flip(currentCol, currentRow);  
-    return true;  
-  }
-  return false;
-}
-
-
+// check win
 function checkWinCondition() {
   let firstValue = gridData[0][0];
   for (let row = 0; row < NUM_ROWS; row++) {
